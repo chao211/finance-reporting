@@ -16,7 +16,6 @@ class Request
     public function __construct(\think\Request $request)
     {
         $this->request = $request;
-        $this->config = Config::get('finance_config') ?? [];
         $this->client = new Client([
             'timeout' => 10,
             'headers' => [
@@ -81,13 +80,9 @@ class Request
      * @param string $key 配置项键名
      * @return mixed 配置项值
      */
-    private function getConfigValue($key)
+    private function getConfigValue($key, $default = null)
     {
-        if (!isset($this->config[$key])) {
-            Log::error("Missing configuration key: $key");
-            return false;
-        }
-        return $this->config[$key];
+        return Config::get("finance_config.$key") ?? [];
     }
 
     /**

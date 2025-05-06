@@ -76,7 +76,7 @@ class ReportCommand extends Command
                     $result = $request->requestRefund([
                         'wechat_merchant_no' => $item->mch_id,
                         'wechat_order_no' => $item->transaction_id,
-                        'wechat_refund_no' => $item->refund_id,
+                        'wechat_refund_no' => $item->refund_no,
                         'platform_order_no' => $item->out_trade_no,
                         'refund_amount' => $item->refund_amount,
                         'project' => $item->project,
