@@ -20,8 +20,7 @@ class PaymentOrder extends Model implements ReportInterface
     public function addOrder($content, $message)
     {
         try {
-            // 创建主订单
-            $order = self::create([
+            $data = [
                 'mch_id' => Arr::get($message, 'mch_id', ''),
                 'transaction_id' => Arr::get($message, 'transaction_id', ''),
                 'out_trade_no' => Arr::get($message, 'out_trade_no', ''),
@@ -33,16 +32,24 @@ class PaymentOrder extends Model implements ReportInterface
                 'project' => Arr::get($content, 'project', ''),
                 'data_type' => (int)Arr::get($content, 'data_type', 1),
                 'order_time' => Arr::get($content, 'order_time', ''),
-            ]);
+            ];
 
+            $order = self::where('transaction_id', $message['transaction_id'])->find();
+            if (empty($order)) {
+                // 创建主订单
+                $order = self::create($data);
+            } else {
+                $data['report_status'] = self::REPORT_STATUS_INIT;
+                $order->save($data);
+            }
             // 处理批量子订单
             if (isset($content['batch_detail']) && is_array($content['batch_detail'])) {
                 $orderBranch = new PaymentOrderBranch();
                 $orderBranch->addOrderBranch($order, $content['batch_detail']);
             }
-
             return $order;
         } catch (\Exception $e) {
+            throw $e;
             // 其他异常处理
             Log::error('创建支付订单失败', ['error' => $e->getMessage(), 'content' => $content, 'message' => $message]);
             return false;

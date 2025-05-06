@@ -9,20 +9,28 @@ class PaymentOrderBranch extends Model
 {
 
 
-    protected $name = 'payment_order_branch';
+    protected $name = 'finance_payment_order_branch';
 
 
     public function addOrderBranch(PaymentOrder $order, $list)
     {
-        $insertData = array_map(function ($item) use ($order) {
-            return [
-                'paymnet_order_id' => $order->id,
-                'order_no' => Arr::get($item, 'order_no'),
-                'order_amount' => Arr::get($item, 'order_amount'),
-            ];
-        }, $list);
-
-        $this->saveAll($insertData);
+        foreach ($list as $item) {
+            $detail = $this->where('order_no', $item['platform_order_no'])
+                ->where('payment_order_id', $order->id)
+                ->find();
+            if ($detail) {
+                $detail->save([
+                    'order_amount' => Arr::get($item, 'total_amount'),
+                ]);
+            } else {
+                $this->save([
+                    'payment_order_id' => $order->id,
+                    'order_no' => Arr::get($item, 'platform_order_no'),
+                    'order_amount' => Arr::get($item, 'total_amount'),
+                ]);
+            }
+        }
+        return true;
     }
 
 

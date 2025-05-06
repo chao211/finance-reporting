@@ -20,7 +20,6 @@ class RefundOrder extends Model implements ReportInterface
     public function addOrder($content, $message)
     {
         try {
-            // 提取数据并创建订单
             $orderData = [
                 'mch_id' => Arr::get($content, 'mch_id'),
                 'project' => Arr::get($content, 'project'),
@@ -31,10 +30,18 @@ class RefundOrder extends Model implements ReportInterface
                 'refund_amount' => Arr::get($message, 'refund_fee'),
                 'refund_success_time' => strtotime(Arr::get($message, 'success_time')),
             ];
-
-            $order = self::create($orderData);
+            // 提取数据并创建订单
+            $order = self::where('transaction_id', $message['transaction_id'])->find();
+            if (empty($order)) {
+                // 创建主订单
+                $order = self::create($orderData);
+            } else {
+                $orderData['report_status'] = self::REPORT_STATUS_INIT;
+                $order->save($orderData);
+            }
             return $order;
         } catch (Exception $e) {
+            throw $e;
             // 记录详细日志信息
             Log::error('创建支付订单失败', [
                 'error_message' => $e->getMessage(),
