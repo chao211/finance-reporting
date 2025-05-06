@@ -1,7 +1,7 @@
 {
   "name": "finance/reporting",
   "description": "Financial data reporting",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "library",
   "license": "MIT",
   "authors": [
