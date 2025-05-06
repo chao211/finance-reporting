@@ -1,0 +1,48 @@
+{
+  "name": "finance/reporting",
+  "description": "Financial data reporting",
+  "version": "1.0.0",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "chao",
+      "email": "942633297@qq.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "finance\\": "src/"
+    }
+  },
+  "extra": {
+    "think-provider": "finance",
+    "think": {
+      "services": [
+        "finance\\Service"
+      ],
+      "config": {
+        "finance_config": "configs/finance_config.php"
+      }
+    }
+  },
+  "require": {
+    "topthink/framework": "^6.0",
+    "guzzlehttp/guzzle": "^6.2 || ^7.0"
+  },
+  "suggest": {
+    "topthink/think-migration": "^3.0"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packagist.org"
+    },
+    {
+      "type": "composer",
+      "url": "https://mirrors.aliyun.com/composer/"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
