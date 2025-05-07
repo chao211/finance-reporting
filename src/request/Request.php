@@ -102,6 +102,9 @@ class Request
             if (empty($value)) {
                 continue;
             }
+            if (is_array($value)) {
+                $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+            }
             $signStr .= $key . '=' . $value . '&';
         }
         //拼接key
