@@ -14,6 +14,7 @@ class PaymentOrderBranch extends Model
 
     public function addOrderBranch(PaymentOrder $order, $list)
     {
+        $insertData = [];
         foreach ($list as $item) {
             $detail = $this->where('order_no', $item['platform_order_no'])
                 ->where('payment_order_id', $order->id)
@@ -23,12 +24,15 @@ class PaymentOrderBranch extends Model
                     'order_amount' => Arr::get($item, 'total_amount'),
                 ]);
             } else {
-                $this->save([
+                $insertData[] = [
                     'payment_order_id' => $order->id,
                     'order_no' => Arr::get($item, 'platform_order_no'),
                     'order_amount' => Arr::get($item, 'total_amount'),
-                ]);
+                ];
             }
+        }
+        if ($insertData) {
+            $this->saveAll($insertData);
         }
         return true;
     }
